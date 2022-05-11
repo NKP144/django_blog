@@ -1,0 +1,73 @@
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+
+  <div class="col-md-8">
+
+    <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+      <div class="col-md-6 px-0">
+        <h1 class="display-4 fst-italic">{{ post.title }}</h1>
+        <p class="lead my-3">{{ post.body|markdown }}</p>
+        <p class="lead mb-0">Published {{ post.publish }} by {{ post.author }}</p>
+        <p class="lead mb-0"><a href="{% url 'blog:post_share' post.id  %}">Share this post</a></p>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+
+      <div class="row">
+        <div class="col-md-4">
+          {% with comments.count as total_comments %}
+              <h2 class="fw-light text-info">{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+          {% endwith %}
+        </div>
+      </div>
+
+      {% for comment in comments %}
+        <div class="row">
+          <div class="col-md-6">
+            <p>Comment {{ forloop.counter }} by {{ comment.name }} {{ comment.created }}</p>
+            <p> {{ comment.body|linebreaks }}</p>
+        </div>
+      </div>
+      {% empty %}
+        <div class="row">
+          <div class="col-md-4">
+            <p>There are no comments yet</p>
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if new_comment %}
+        <div class="row">
+          <div class="col-md-4">
+            <h2>Your comment has been added</h2>
+          </div>
+        </div>
+      {% else %}
+        <div class="row">
+          <div class="col-md-6">
+            <h2>Add a new comment</h2>
+            <form action="." method="post">
+              {% csrf_token %}
+              {{ comment_form.as_p }}
+              <button type="submit" class="btn btn-primary">Add comment</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Similar Posts</h2>
+          {% for sim_post in similar_posts %}
+          <p><a href="{{ sim_post.get_absolute_url }}"> {{ sim_post.title }}</a></p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

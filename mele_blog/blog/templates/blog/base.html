@@ -1,0 +1,90 @@
+{% load blog_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static "blog/css/blog.css" %}" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Third navbar example">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'blog:post_list' %}">БЛОГ</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarsExample03">
+                        <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Link</a>
+                            </li>
+                        </ul>
+                        <form action="." method="get">
+                            {% for f in global_form %}
+                                <div class="form-error">{{ f.errors }}</div>
+                                {{ f }}
+                            {% endfor %}
+                        </form>
+                        <a class="nav-link" href="#">Sign in</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="container">
+        <br>
+        <div class="row g-5">
+            {% block content %}{% endblock %}
+
+            <div class="col-md-4">
+                <div class="position-sticky" style="top: 2rem;">
+                    <div class="p-4 mb-3 bg-light rounded">
+                        <h4 class="fst-italic">О сойте</h4>
+                        <p class="mb-0">Разработка учебного блога</p>
+                        <p class="mb-0">{% total_posts %} поста в блоге</p>
+                        <p class="mb-0"><a href="{% url 'blog:post_feed' %}">Подпишись на RSS рассылку</a></p>
+                    </div>
+
+                    <div class="p-4">
+                        <h3 class="fst-italic">Последние записи</h3>
+                        {% show_latest_posts 3 %}
+                    </div>
+
+                    <div class="p-4">
+                        <h3 class="fst-italic">Самые закомментированные записи</h3>
+                        {% get_most_commented_posts as most_commented_posts %}
+                        <ol class="list-unstyled">
+                            {% for post in most_commented_posts %}
+                                <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>
+
+

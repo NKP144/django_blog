@@ -1,0 +1,34 @@
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+{% block title %}My Blog{% endblock %}
+{% block content %}
+
+  <div class="col-md-8">
+  {% if tag %}
+    <h3 class="pb-4 mb-4 fst-italic border-bottom">Posts tagged with "{{ tag.name }}"</h3>
+  {% endif %}
+
+  {% for post in posts %}
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+          <div class="col p-4 d-flex flex-column position-static">
+            <h3 class="mb-0">{{ post.title }}</h3>
+            <!-- <p>Tags: {{ post.tags.all|join:", " }}</p> -->
+            <div class="mb-1 text-muted">Published {{ post.publish }} by {{ post.author }}</div>
+            <p class="card-text mb-auto">{{ post.body|markdown|truncatewords_html:30 }}</p>
+            <a href="{{ post.get_absolute_url }}">Continue reading</a>
+            <div class="row">
+              <p>
+                Tags:
+                {% for tag in post.tags.all %}
+                  <a href="{% url 'blog:post_list_by_tag' tag.slug %}"> {{ tag.name }}</a>
+                {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+            </div>
+          </div>
+      </div>
+  {% endfor %}
+
+  {% include "blog/pagination.html" with page=posts %}
+  </div>
+{% endblock %}
